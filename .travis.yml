@@ -3,9 +3,13 @@ os: osx
 osx_image: xcode9.2
 xcode_sdk: iphonesimulator11.2
 
+env:
+  - CACHE_NAME=carthage_dependecies
+
 cache:
+  - bundler: true
   directories:
-  - Carthage
+    - Carthage
 
 before_script:
   - bundle exec danger
