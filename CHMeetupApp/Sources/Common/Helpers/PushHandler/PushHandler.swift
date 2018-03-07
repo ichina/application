@@ -10,7 +10,7 @@ import UIKit
 
 typealias PushSequence = [AnyHashable: Any]
 
-final class PushHandler {
+final class PushHandler{
 
   private static let actionKey = "action"
   private var router: UniversalRouter!
