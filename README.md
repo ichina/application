@@ -3,10 +3,10 @@
 <img src="https://img.shields.io/badge/Swift-3.2.0-orange.svg?style=flat" alt="Swift">
 </a>
 <a href="https://travis-ci.org/ichina/application">
-<img src="https://travis-ci.org/ichina/application.svg?branch=develop" alt="Build status">
+<img src="https://travis-ci.org/ichina/application.svg?branch=test" alt="Build status">
 </a>
 <a href="https://codecov.io/gh/ichina/application">
-<img src="https://codecov.io/gh/ichina/application/branch/develop/graph/badge.svg" alt="Codecov" />
+<img src="https://codecov.io/gh/ichina/application/branch/test/graph/badge.svg" alt="Codecov" />
 </a>
 </p>
 
