@@ -122,6 +122,12 @@ final class StringValidationTests: XCTestCase {
     XCTAssertTrue(isURL)
   }
 
+  func testEmptyUrl() {
+    let url = ""
+    let isURL = StringValidation.isValid(string: url, type: .url)
+    XCTAssertFalse(isURL)
+  }
+
   // MARK: - Url With Type
 
   func testVKShortPathUrl() {
