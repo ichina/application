@@ -11,6 +11,7 @@ cache:
   directories:
     - Carthage
 
+
 before_script:
   - bundle exec danger
   - brew update && brew bundle
