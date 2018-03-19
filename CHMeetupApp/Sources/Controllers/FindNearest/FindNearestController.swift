@@ -56,4 +56,8 @@ extension FindNearestController: BeaconScannerDelegate {
     NearestUserPlainObjectTranslation.translate(of: beacons, to: nil)
     onNearestUsersUpdated?()
   }
+
+  func bluetoothDidTurnOff() {
+
+  }
 }

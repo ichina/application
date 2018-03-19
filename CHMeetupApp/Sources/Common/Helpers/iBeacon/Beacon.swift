@@ -7,11 +7,6 @@
 //
 
 import Foundation
-import CoreBluetooth
-
-protocol BeaconDelegate: class {
-  func needDisconnect(beacon: Beacon, peripheral: CBPeripheral)
-}
 
 class Beacon: NSObject {
 
@@ -30,11 +25,9 @@ class Beacon: NSObject {
   private(set) var state: BeaconState = .notEnoughRSSIData
   private(set) var proximityState: ProximityState = .unknown
 
-  private(set) var peripheral: CBPeripheral?
+  private(set) var peripheral: IBeaconPeripheral?
 
-  weak var delegate: BeaconDelegate?
-
-  init(peripheral: CBPeripheral) {
+  init(peripheral: IBeaconPeripheral) {
     self.peripheral = peripheral
     self.proximityUUID = peripheral.identifier
   }
@@ -64,6 +57,24 @@ class Beacon: NSObject {
       rssiStack.append(BeaconConstans.Scanner.PinaltyScore)
     }
 
+  }
+
+  func updateValues(with data: Data) {
+    guard let newStrings = String(data: data, encoding: .utf8)?.components(separatedBy: ","),
+    newStrings.count == 2,
+    let userID = Int(newStrings.first ?? ""),
+    let userName = newStrings.last else {
+      return
+    }
+
+    self.userID = userID
+    self.userName = userName
+    self.peripheral = nil
+
+  }
+
+  func updatePeripheral(with peripheral: IBeaconPeripheral?) {
+    self.peripheral = peripheral
   }
 
   func calculateProximity() {
@@ -118,50 +129,4 @@ enum ProximityState: Int {
   case near
   case far
   case unknown
-}
-
-extension Beacon: CBPeripheralDelegate {
-
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-    if error == nil {
-      #if DEBUG_BEACON_SCANNING
-      print("did discover services: \(peripheral.identifier.uuidString)")
-      #endif
-      if let service = peripheral.services?.first {
-        peripheral.discoverCharacteristics([BeaconConstans.CharacteristicUUID], for: service)
-      }
-    } else {
-      delegate?.needDisconnect(beacon: self, peripheral: peripheral)
-    }
-  }
-
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-    if error == nil, let characteristic = service.characteristics?.first {
-      #if DEBUG_BEACON_SCANNING
-      print("did discover characteristics: \(peripheral.identifier.uuidString)")
-      #endif
-      peripheral.readValue(for: characteristic)
-    } else {
-      delegate?.needDisconnect(beacon: self, peripheral: peripheral)
-    }
-  }
-
-  func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-    defer {
-      delegate?.needDisconnect(beacon: self, peripheral: peripheral)
-    }
-
-    guard error == nil,
-      let data = characteristic.value,
-      let newStrings = String(data: data, encoding: .utf8)?.components(separatedBy: ","),
-      newStrings.count == 2,
-      let userID = Int(newStrings.first ?? ""),
-      let userName = newStrings.last else {
-        return
-    }
-
-    self.userID = userID
-    self.userName = userName
-    self.peripheral = nil
-  }
 }
